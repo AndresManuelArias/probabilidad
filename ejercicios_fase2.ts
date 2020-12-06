@@ -114,3 +114,54 @@ let impriHiper:string[] = [
 console.log("resumen distribucion hiper")
 console.log(impriHiper.map((a)=>`P(x >= 2)=${a}`).join("newline \n"))
 
+/**
+
+    e. Un Kiosco pide 200 copias del periódico El Colombiano cada semana.
+    Se estima que la cantidad de copias del periódico que se vende
+    semanalmente se distribuye normal con parámetros 𝜇 = 180 y 𝜎 = 8.
+*/
+console.log("distribucion normal")
+console.log(probabilidad.imprimirVariableEstandarizadaZ(180,8)(200).join("newline\n "))
+/*
+    1) Encuentre la probabilidad de que, en una semana dada, el kiosco
+    venda exactamente las 200 copias del periódico El Colombiano.
+*/
+let variableEstandarizadaZ:number = probabilidad.variableEstandarizadaZ(180,8)(200)
+console.log(1)
+console.log("a")
+
+console.log(probabilidad.imprimirDistribucionNormal([variableEstandarizadaZ,variableEstandarizadaZ],probabilidad.Opciones.entresQue).join("newline\n "))
+console.log("b")
+console.log(probabilidad.imprimirDistribucionNormal([variableEstandarizadaZ],probabilidad.Opciones.mayorIgualQue).join("newline\n "))
+
+/*
+    2) Cual es la probabilidad de que en una semana necesite pedir nuevas
+    copias del periódico porque se vendieron todas?
+
+ */
+
+console.log(2)
+console.log(probabilidad.imprimirDistribucionNormal([variableEstandarizadaZ,variableEstandarizadaZ],probabilidad.Opciones.menorIgualQue).join("newline\n "))
+
+
+// primer ejercicio binomial
+console.log("primer ejercicio binomial")
+console.log("anoto 3 es")
+
+console.log(probabilidad.imprimirdistribucionBinomial(0.85,16,3,probabilidad.Opciones.menorIgualQue).join("newline\n "))
+console.log("anoto 5")
+console.log(probabilidad.imprimirdistribucionBinomial(0.50,4,1,probabilidad.Opciones.menorIgualQue).join("newline\n "))
+
+console.log("anoto 3")
+console.log(probabilidad.imprimirdistribucionBinomial(0.80,10,6,probabilidad.Opciones.menorIgualQue).join("newline\n "))
+
+
+
+console.log("otro")
+
+console.log(probabilidad.imprimirdistribucionBinomial(0.85,16,11,probabilidad.Opciones.menorIgualQue).join("newline\n "))
+
+
+console.log("anoto 3 es")
+
+console.log(probabilidad.imprimirdistribucionBinomial(0.85,16,3,probabilidad.Opciones.menorIgualQue).join("newline\n "))

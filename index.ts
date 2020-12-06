@@ -23,6 +23,48 @@ export function distribucionPoisson(m:number):(x:number)=>number{
         return  (Math.pow(m,n ))*(Math.pow(Math.E,-m))/Number(factorial(n))
     }
 }
+function bino(_probaExistos:number,_totalExpermientos:number):(_exitos:number)=>number {
+    return (_e:number)=>{
+        return $C.combination(_totalExpermientos,_e)*Math.pow(_probaExistos,_e) * Math.pow(1-_probaExistos,_totalExpermientos-_e)
+    }
+}
+function binomial(_probaExistos:number,_totalExpermientos:number,_exitos:number):number{
+    return /*$C.combination(_totalExpermientos,_exitos)**/Math.pow(_probaExistos,_exitos) * Math.pow((1-_probaExistos),(_totalExpermientos-_exitos))
+
+}
+export function distribucionBinomial(probaExistos:number,totalExpermientos:number,exitos:number,opciones?:Opciones):number{
+    let resultado:number=0
+
+
+    switch (opciones) {
+        case Opciones.igualQue:
+        resultado = bino(probaExistos,totalExpermientos)(exitos)
+        break;
+        case Opciones.entresQue:
+            
+        break;
+        case Opciones.mayorQue:
+            resultado = 1- [...Array(exitos+1).keys()].map(bino(probaExistos,totalExpermientos)).reduce((a,b)=>a+b)
+
+        break;
+        case Opciones.menorIgualQue:
+            resultado = [...Array(exitos+1).keys()].map(bino(probaExistos,totalExpermientos)).reduce((a,b)=>a+b)
+            
+        break;
+        case Opciones.mayorIgualQue:
+            resultado = 1- [...Array(exitos).keys()].map(bino(probaExistos,totalExpermientos)).reduce((a,b)=>a+b)
+       
+        break;
+        case Opciones.menorQue:
+            resultado = [...Array(exitos).keys()].map(bino(probaExistos,totalExpermientos)).reduce((a,b)=>a+b)
+        break;
+        default:
+        resultado = bino(probaExistos,totalExpermientos)(exitos)
+
+        break;
+    }
+   return resultado
+}
 export function distribucionPoissonEntre(m:number,x:number,desde:number=0,fueraDE:boolean=false):number{
     
     let entre:number[] = [...  Array(x+1).keys()].splice(desde)
@@ -34,6 +76,68 @@ export function distribucionPoissonEntre(m:number,x:number,desde:number=0,fueraD
     }
   
 }
+//https://www.youtube.com/watch?v=EisaSQ1j_Kk&list=TLPQMzAxMTIwMjCavd1LwbipRQ&index=2
+export function imprimirdistribucionBinomial(probaExistos:number,totalExpermientos:number,exitos:number,opciones?:Opciones):string[]{
+    console.log(probaExistos,totalExpermientos,exitos,opciones,"resulta","Math.pow("+probaExistos,exitos+ ") * "+ "Math.pow("+(1-probaExistos),(totalExpermientos-exitos)+")")
+    console.log(probaExistos,totalExpermientos,exitos,opciones,"resulta","Math.pow("+probaExistos,exitos+ ") * "+ "Math.pow("+(1-probaExistos),(totalExpermientos-exitos)+")")
+    console.log(probaExistos,totalExpermientos,exitos,opciones,"resulta",Math.pow(probaExistos,exitos)+ "*"+ Math.pow((1-probaExistos),(totalExpermientos-exitos)))
+    console.log(probaExistos,totalExpermientos,exitos,opciones,"resulta",Math.pow(probaExistos,exitos) * Math.pow((1-probaExistos),(totalExpermientos-exitos)))
+
+    function impriBino (_probaExistos:number,_totalExpermientos:number,_exitos:number):string[]{
+        return [
+            ` C(n,x  ){p}^{ x }{q}^{ n-x }`,
+            `C(${_totalExpermientos},${_exitos} ) cdot {${_probaExistos}}^{ ${_exitos} } cdot{${redondeo(1-_probaExistos)}}^{ ${_totalExpermientos}-${_exitos} }`,
+            `${$C.combination(_totalExpermientos,_exitos)} cdot ${redondeo(Math.pow(_probaExistos,_exitos))} cdot ${redondeo(Math.pow(1-_probaExistos,_totalExpermientos-_exitos))}`,
+            `${redondeo($C.combination(_totalExpermientos,_exitos)*Math.pow(_probaExistos,_exitos)*Math.pow(1-_probaExistos,_totalExpermientos-_exitos))}`,
+            `${$C.combination(_totalExpermientos,_exitos)} cdot (Math.pow(${_probaExistos},${_exitos})).toFixed(3) cdot (Math.pow(1-${_probaExistos},${_totalExpermientos}-${_exitos})).toFixed(3)`,
+
+        ]
+    }
+
+    let resultado:string[]=[]
+    switch (opciones) {
+        case Opciones.igualQue:
+            
+        resultado = impriBino(probaExistos,totalExpermientos,exitos).map((p)=>`P(${exitos})=${p}`)
+        break;
+        case Opciones.entresQue:
+            
+        break;
+        case Opciones.mayorQue:
+
+            // resultado = 1- [...Array(exitos+1).keys()].map(bino(probaExistos,totalExpermientos)).reduce((a,b)=>a+b)
+
+        break;
+        case Opciones.menorIgualQue:
+            let operaciones:string []=[...Array(4).keys()].map((i)=>{
+                return ` ${[...Array(exitos+1).keys()].map((e)=>`(${impriBino(probaExistos,totalExpermientos,e)[i]})`).join(" +  ") }   `
+             })
+             console.log(probaExistos,totalExpermientos,exitos,opciones,"resulta",binomial(probaExistos,totalExpermientos,exitos))
+             operaciones.push(distribucionBinomial(probaExistos,totalExpermientos,exitos,opciones)+"")
+            resultado = operaciones.map((p)=>`P(${[...Array(exitos+1).keys()]})=${p}`)
+            
+        break;
+        case Opciones.mayorIgualQue:
+            // resultado = 1- [...Array(exitos).keys()].map(bino(probaExistos,totalExpermientos)).reduce((a,b)=>a+b)
+       
+        break;
+        case Opciones.menorQue:
+            // resultado = [...Array(exitos).keys()].map(bino(probaExistos,totalExpermientos)).reduce((a,b)=>a+b)
+        break;
+        default:
+            resultado = impriBino(probaExistos,totalExpermientos,exitos).map((p)=>`P(${exitos})=${p}`)
+        break;
+    }
+   return resultado
+//    return [
+//         `P(x)= C(n,x  ){p}^{ x }{q}^{ n-x }`,
+//         `P(${exitos})= C(${totalExpermientos},${exitos} ){${probaExistos}}^{ ${exitos} }{${redondeo(1-probaExistos)}}^{ ${totalExpermientos}-${exitos} }`,
+//         `P(${exitos})= ${$C.combination(totalExpermientos,exitos)}cdot${redondeo(Math.pow(probaExistos,exitos))} cdot ${redondeo(Math.pow(1-probaExistos,totalExpermientos-exitos))}`,
+//         `P(${exitos})= ${redondeo($C.combination(totalExpermientos,exitos)*Math.pow(probaExistos,exitos)*Math.pow(1-probaExistos,totalExpermientos-exitos))}`,
+//     ]
+
+}
+
 export function imprimirDistribucionPoisson(m:number,x:number,index:number=0):string{
     return [
         (m:number,x:number):string=>`P( X/ lambdabar  )={lambdabar^{X}e^{ -lambdabar }}over{ X! } newline`,
@@ -99,6 +203,16 @@ export function variableEstandarizadaZ(m:number,d:number):(x:number)=>number{
         return  redondeo((n-m)/d,10000);
     }
 }
+export function imprimirVariableEstandarizadaZ(m:number,d:number):(x:number)=>string[]{
+    return (n:number)=>{
+        return [
+            `z={( x- 𝜇)}over{ 𝜎 }`,
+            `z={( ${n}- ${m})}over{ ${d} }`,
+            `z=${ redondeo((n-m)/d,10000)}`,
+        ]
+         
+    }
+}
 export enum Opciones {
     mayorIgualQue,
     menorIgualQue,
@@ -107,6 +221,43 @@ export enum Opciones {
     entresQue,
     mayorQue,
     igualQue
+}
+export function imprimirDistribucionNormal(Z:number[],opciones?:Opciones):string[]
+{
+    Z.sort()
+    let resultado:string[] = ['']
+    switch (opciones) {
+        case Opciones.igualQue:
+
+        break;
+        case Opciones.entresQue:
+            resultado= [
+                `int from{ -infinity } to{infinity} f(x)= int from{ -infinity } to{infinity} {{ 1 }over{  𝜎 sqrt{2pi}  } func e^{ {-1} over {2}({( x- 𝜇)}over{ 𝜎 })^2 }  } `,
+                `int from{ ${Z[0]} } to{${Z[1]}}f(  ${Z[0]}>= x <= ${Z[1]}  )= ${encontrarPorcentajeAreaBajoLaCurva(Z,opciones)} `
+             ]
+            
+        break;
+        case Opciones.mayorQue:
+  
+        break;
+        case Opciones.menorIgualQue:
+            resultado= [
+                `int from{ -infinity } to{infinity} f(x)= int from{ -infinity } to{infinity} {{ 1 }over{  𝜎 sqrt{2pi}  } func e^{ {-1} over {2}({( x- 𝜇)}over{ 𝜎 })^2 }  } `,
+                `int from{ -infinity } to{${Z[0]}}f(   x <= ${Z[0]}  )= ${encontrarPorcentajeAreaBajoLaCurva(Z,opciones)}  `
+             ]
+        break;
+        case Opciones.mayorIgualQue:
+            resultado= [
+                `int from{ -infinity } to{infinity} f(x)= int from{ -infinity } to{infinity} {{ 1 }over{  𝜎 sqrt{2pi}  } func e^{ {-1} over {2}({( x- 𝜇)}over{ 𝜎 })^2 }  } `,
+                `int from{ ${Z[0]} } to{infinity}f(  ${Z[0]}>= x  )= ${encontrarPorcentajeAreaBajoLaCurva(Z,opciones)} `
+             ]
+        break;
+        case Opciones.menorQue:
+        break;
+        default:
+        break;
+    }
+    return resultado
 }
 
 export function encontrarPorcentajeAreaBajoLaCurva(Z:number[],opciones?:Opciones):number{

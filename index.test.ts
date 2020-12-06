@@ -205,6 +205,11 @@ datosDistribucionNormal.forEach((dato,index)=>{
         assertEquals(busquedaAreaBajoLaCurvaNormalEstandarizada(dato[0]),dato[1]);
     });
 })
+
+
+
+
+
 let datosDistribucionNormalOpciones:[number[],number,probabilidad.Opciones][]=[
     [[1.25],0.1056,probabilidad.Opciones.mayorIgualQue],
     [[-1.25],0.1056,probabilidad.Opciones.menorIgualQue],
@@ -227,7 +232,9 @@ let datosDistribucionNormalOpciones2:[tipoConteoReglaEmpirica,number[],number,pr
     [{m:160,d:2},[158,158],0,probabilidad.Opciones.entresQue],
     [{m:205,d:10},[200],0.3085,probabilidad.Opciones.menorIgualQue],
     [{m:205,d:10},[200],0.6915,probabilidad.Opciones.mayorIgualQue],
-    [{m:1000,d:14},[990],0.95,probabilidad.Opciones.menorIgualQue],
+    // [{m:1000,d:14},[990],0.95,probabilidad.Opciones.menorIgualQue],
+    [{m:180,d:8},[200,200],0,probabilidad.Opciones.entresQue],
+    [{m:180,d:8},[200],0.9938,probabilidad.Opciones.menorIgualQue],
 ]
 
 datosDistribucionNormalOpciones2.forEach((dato,index)=>{
@@ -245,3 +252,25 @@ datosDistribucionNormalOpciones2.forEach((dato,index)=>{
 //     [{m:22.4,d:2.7},[27.8,30.5]]
 // ]
 
+let datosdistribucionBinomial:[number/*probaExistos */,number/*totalExpermientos */,number/*exitos */,number,probabilidad.Opciones?][]=[
+    [0.55,5,2,0.27565, probabilidad.Opciones.igualQue],
+    [0.12,5,2,0.098131, probabilidad.Opciones.igualQue],
+    [0.12,5,0,0.5277, probabilidad.Opciones.igualQue],
+    [0.12,5,0,0.4723, probabilidad.Opciones.mayorQue],
+    [0.12,5,3,0.9857,probabilidad.Opciones.menorQue],
+    [0.12,5,3,0.0143,probabilidad.Opciones.mayorIgualQue],
+    [0.50,4,1,0.3125,probabilidad.Opciones.menorIgualQue],
+    [0.85,16,5,0,probabilidad.Opciones.menorIgualQue],
+    [0.85,16,3,0,probabilidad.Opciones.menorIgualQue],
+    [0.85,16,3,0,probabilidad.Opciones.menorIgualQue],
+    [0.80,10,6,0.1209,probabilidad.Opciones.menorIgualQue],
+    
+]
+
+datosdistribucionBinomial.forEach((dato,index)=>{
+    Deno.test("distribucionBinomial "+index+" "+dato[1], () => {
+        assertEquals(redondeo(probabilidad.distribucionBinomial(dato[0],dato[1],dato[2],dato[4]),10000),redondeo(dato[3],10000));
+    });
+})
+
+// esto genra error Math.pow(0.15000000000000002, 13) = 1.946195068359379e-11
