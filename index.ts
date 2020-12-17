@@ -7,7 +7,7 @@ import {NotacionSigma} from 'https://raw.githubusercontent.com/AndresManuelArias
 export function permutaciones(conteo:number,f:number){
     return  [...  Array(conteo+1).keys()].splice(1).sort((a,b)=>b-a).splice(0,f).reduce((a,b)=>a*b)
 }
-export function combination(c:number,f:number){
+export function combination(c:number,f:number):number{
     return  permutaciones(c,f)*(1/permutaciones(f,f))
 } 
 export function numeroDivi(numeros:number,listaNumeros:number[]) {
@@ -25,7 +25,7 @@ export function distribucionPoisson(m:number):(x:number)=>number{
 }
 function bino(_probaExistos:number,_totalExpermientos:number):(_exitos:number)=>number {
     return (_e:number)=>{
-        return $C.combination(_totalExpermientos,_e)*Math.pow(_probaExistos,_e) * Math.pow(1-_probaExistos,_totalExpermientos-_e)
+        return combination(_totalExpermientos,_e)* Math.pow(_probaExistos,_e) * Math.pow(1-_probaExistos,_totalExpermientos-_e)
     }
 }
 function binomial(_probaExistos:number,_totalExpermientos:number,_exitos:number):number{
@@ -88,7 +88,7 @@ export function imprimirdistribucionBinomial(probaExistos:number,totalExpermient
             ` C(n,x  ){p}^{ x }{q}^{ n-x }`,
             `C(${_totalExpermientos},${_exitos} ) cdot {${_probaExistos}}^{ ${_exitos} } cdot{${redondeo(1-_probaExistos)}}^{ ${_totalExpermientos}-${_exitos} }`,
             `${$C.combination(_totalExpermientos,_exitos)} cdot ${redondeo(Math.pow(_probaExistos,_exitos))} cdot ${redondeo(Math.pow(1-_probaExistos,_totalExpermientos-_exitos))}`,
-            `${redondeo($C.combination(_totalExpermientos,_exitos)*Math.pow(_probaExistos,_exitos)*Math.pow(1-_probaExistos,_totalExpermientos-_exitos))}`,
+            // `${redondeo($C.combination(_totalExpermientos,_exitos)*Math.pow(_probaExistos,_exitos)*Math.pow(1-_probaExistos,_totalExpermientos-_exitos))}`,
             `${$C.combination(_totalExpermientos,_exitos)} cdot (Math.pow(${_probaExistos},${_exitos})).toFixed(3) cdot (Math.pow(1-${_probaExistos},${_totalExpermientos}-${_exitos})).toFixed(3)`,
 
         ]
@@ -161,6 +161,16 @@ export function imprimirCombinaciones(n:number,r:number,index:number=0):string{
         (n:number,r:number):string=>`{}_{${n}}C_{${r}}= ${factorial(n)/(factorial(r) * factorial(n-r))}  newline`,
     ][index](n,r)
 }
+export function imprimirCombinaciones2(n:number,r:number,index:number=0):string[]{
+    return [
+        `{}_{n}C_{r}= {n!} over { r! cdot(n-r)!}  newline`,
+        `{}_{${n}}C_{${r}}= {${imprimirFactorial(n)}} over { ${imprimirFactorial(r)}  cdot(${n}-${r})!}  newline`,
+        `{}_{${n}}C_{${r}}= {${factorial(n)}} over { ${factorial(r)}  cdot(${n-r})!}  newline`,
+        `{}_{${n}}C_{${r}}= {${factorial(n)}} over { ${factorial(r)}  cdot(${factorial(n-r)})!}  newline`,
+        `{}_{${n}}C_{${r}}= {${factorial(n)}} over { ${factorial(r) * factorial(n-r)}}  newline`,
+        `{}_{${n}}C_{${r}}= ${factorial(n)/(factorial(r) * factorial(n-r))}  newline`,
+    ]
+}
 
 export function imprimirPermutaciones(n:number,r:number,index:number=0):string{
     return [
@@ -172,7 +182,17 @@ export function imprimirPermutaciones(n:number,r:number,index:number=0):string{
         (n:number,r:number):string=>`{}_{${n}}P_{${r}}= ${factorial(n)/( factorial(n-r))}  newline`,
     ][index](n,r)
 }
-
+export function imprimirPermutaciones2(n:number,r:number,index:number=0):string[]{
+    
+    return [
+        `{}_{n}P_{r}= {n!} over {(n-r)!}  newline`,
+        `{}_{${n}}P_{${r}}= {${imprimirFactorial(n)}} over { (${n}-${r})!}  newline`,
+        `{}_{${n}}P_{${r}}= {${factorial(n)}} over { (${n-r})!}  newline`,
+        `{}_{${n}}P_{${r}}= {${factorial(n)}} over { (${factorial(n-r)})!}  newline`,
+        `{}_{${n}}P_{${r}}= {${factorial(n)}} over { ${factorial(n-r)}}  newline`,
+        `{}_{${n}}P_{${r}}= ${factorial(n)/( factorial(n-r))}  newline`,
+    ]
+}
 export function redondeo(n:number,decimales:number=10000){
     return Math.round( n*decimales) / decimales
 }
@@ -399,6 +419,93 @@ export async function tablaPromesa():Promise<number[][]>{
 export function convertirTextoToTabla(texto:string):number[][]{
     let arrayTexto:number[][]= texto.split("\n").map((n)=>n.split("\t").map(Number))
     return arrayTexto;
+}
+export function multiplicarRamaImprimir(p:any,lista:string[]):string {
+    // debugger;
+    let result:string="";
+    if(lista.length>1){
+      result= " cdot "+multiplicarRamaImprimir(p.get(lista[0])[1],lista.slice(1)) 
+    }
+    return `${p.get(lista[0])[0]} ${result}` 
+}
+export function teoremaBayes(diagramaArbol:any,lista:string[],i:number):string[] {
+    return [
+    `P( ${lista[0]} divides ${lista[1]}  )={ P(${lista[0]})  cdot  P(${lista[1]} divides ${lista[0]}) }over{P(${lista[1]})  } newline`,
+    `P( ${lista[0]} divides ${lista[1]}  )={ ${multiplicarRamaImprimir(diagramaArbol,lista)}  }over{ ${[...diagramaArbol.keys() ].map((a)=> multiplicarRamaImprimir(diagramaArbol,[a,lista[1]])).reduce((a,b)=>a+" + "+b)}  } newline`,
+    `P( ${lista[0]} divides ${lista[1]}  )={ ${multiplicarRama(diagramaArbol,lista).toFixed(6)}  }over{ ${[...diagramaArbol.keys() ].map((a)=> `${multiplicarRama(diagramaArbol,[a,lista[1]]).toFixed(6)}` ).reduce((a,b)=>a+" + "+b)}  } newline`,
+    `P( ${lista[0]} divides ${lista[1]}  )={ ${multiplicarRama(diagramaArbol,lista).toFixed(6)}  }over{ ${ ([...diagramaArbol.keys() ].map((a)=> multiplicarRama(diagramaArbol,[a,lista[1]])).reduce((a,b)=>a + b)).toFixed(6)}  } newline`,
+    `P( ${lista[0]} divides ${lista[1]}  )={ ${ (multiplicarRama(diagramaArbol,lista)/ ([...diagramaArbol.keys() ].map((a)=> multiplicarRama(diagramaArbol,[a,lista[1]])).reduce((a,b)=>a + b))).toFixed(6)}  } newline`,
+    ]
+}
+function multiplicarRama(p:any,lista:string[]):number {
+    // debugger;
+    let result:number=1;
+    if(lista.length>1){
+      result= multiplicarRama(p.get(lista[0])[1],lista.slice(1)) 
+    }
+    return p.get(lista[0])[0]*result
+}
+function mediana(array:number[]):number{
+    array.sort((a,b)=>a-b)
+    return array.length%2==0?(array[(array.length/2)-1]+array[(array.length/2)])/2 :array[Math.floor(array.length/2)]
+}
+export enum NumeroCuartil {
+    uno,
+    dos,
+    tres
+}
+export function cuartil(array:number[],numeroCuartil:NumeroCuartil=NumeroCuartil.uno):number{//https://www.youtube.com/watch?app=desktop&v=suSz9RXFNTs
+    array.sort((a,b)=>a-b)
+    let indice:number = array.length/4
+    switch (numeroCuartil) {
+        case NumeroCuartil.uno:
+           return (array.length-Math.round(array.length/2))%2==0?(array[Math.floor(indice)-1]+array[Math.floor(indice)])/2:array[Math.floor(indice)]
+        break;
+        case NumeroCuartil.dos:
+           return array.length%2==0?(array[(indice*2)-1]+array[(indice*2)])/2 :array[Math.floor(indice*2)]            
+        break;
+        case NumeroCuartil.tres:
+            // return indice*3;
+           return (array.length-Math.round(array.length/2))%2==0?(array[Math.round(indice*3)-1]+array[Math.round(indice*3)])/2:array[Math.floor(indice*3)]        
+        break;                   
+        default:
+            return NaN;
+        break;
+    }
+}
+function mediaAritmetica(array:number[],decimal:number=2):number{
+    return Number( (array.reduce((a,b)=>a+b)/array.length).toFixed(decimal))
+}
+interface propiedad{
+    [key:number]: number[];
+}
+export function moda(array:number[]):number{
+    let colection:Set<number> = new Set();
+    array.forEach((a:number)=> colection.add(a))
+    let objeto:propiedad={};
+    let colect:number[] =  [...colection]//.map((e)=>[e,[]])
+    colect.forEach((e)=>objeto[e]=[]) 
+    let col:Map<number,number[]>  = new Map([...colection].map((e)=>[e,[]]))
+    array.forEach((a:number)=>{
+        // let agregar= typeof( col.get(a))=="undefined"?[]:col.get(a)?.concat(a)
+        // col.set(a, agregar)
+        objeto[a]=objeto[a]?.concat(a)
+
+    })
+    let arrayMap:[number,number[]][]=Object.entries(objeto).map((d)=>[Number(d[0]), d[1]])
+    // for (const [key, value] of Object.entries(objeto)) {
+    //     arrayMap.push([Number(key), value])
+    //   }
+
+    let convertidoMaximoRepetido:[number,number][]= arrayMap.map((a)=>[a[0],a[1].length])
+    let numeroMaximo:number=arrayMap.map((a)=>a[1].length).reduce((na,nf)=> Math.max(na,nf))
+    return convertidoMaximoRepetido[convertidoMaximoRepetido.findIndex((c)=>c[1]==numeroMaximo)][0] 
+}
+function procentajes(array:number[],decimal:number=2):(n:number)=> string{
+    let suma = array.reduce((a,b)=>a+b)
+    return (n)=>{
+        return  array.some((num)=>num==n)? (n/suma).toFixed(decimal):"error"
+    }
 }
 
 export let textoTabla:string=

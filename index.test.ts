@@ -252,25 +252,80 @@ datosDistribucionNormalOpciones2.forEach((dato,index)=>{
 //     [{m:22.4,d:2.7},[27.8,30.5]]
 // ]
 
-let datosdistribucionBinomial:[number/*probaExistos */,number/*totalExpermientos */,number/*exitos */,number,probabilidad.Opciones?][]=[
-    [0.55,5,2,0.27565, probabilidad.Opciones.igualQue],
-    [0.12,5,2,0.098131, probabilidad.Opciones.igualQue],
-    [0.12,5,0,0.5277, probabilidad.Opciones.igualQue],
-    [0.12,5,0,0.4723, probabilidad.Opciones.mayorQue],
-    [0.12,5,3,0.9857,probabilidad.Opciones.menorQue],
-    [0.12,5,3,0.0143,probabilidad.Opciones.mayorIgualQue],
-    [0.50,4,1,0.3125,probabilidad.Opciones.menorIgualQue],
-    [0.85,16,5,0,probabilidad.Opciones.menorIgualQue],
-    [0.85,16,3,0,probabilidad.Opciones.menorIgualQue],
-    [0.85,16,3,0,probabilidad.Opciones.menorIgualQue],
-    [0.80,10,6,0.1209,probabilidad.Opciones.menorIgualQue],
+// let datosdistribucionBinomial:[number/*probaExistos */,number/*totalExpermientos */,number/*exitos */,number,probabilidad.Opciones?][]=[
+//     [0.55,5,2,0.27565, probabilidad.Opciones.igualQue],
+//     [0.12,5,2,0.098131, probabilidad.Opciones.igualQue],
+//     [0.12,5,0,0.5277, probabilidad.Opciones.igualQue],
+//     [0.12,5,0,0.4723, probabilidad.Opciones.mayorQue],
+//     [0.12,5,3,0.9857,probabilidad.Opciones.menorQue],
+//     [0.12,5,3,0.0143,probabilidad.Opciones.mayorIgualQue],
+//     [0.50,4,1,0.3125,probabilidad.Opciones.menorIgualQue],
+//     [0.85,16,5,0,probabilidad.Opciones.menorIgualQue],
+//     [0.85,16,3,0,probabilidad.Opciones.menorIgualQue],
+//     [0.85,16,3,0,probabilidad.Opciones.menorIgualQue],
+//     [0.80,10,6,0.1209,probabilidad.Opciones.menorIgualQue],
     
-]
+// ]
 
-datosdistribucionBinomial.forEach((dato,index)=>{
-    Deno.test("distribucionBinomial "+index+" "+dato[1], () => {
-        assertEquals(redondeo(probabilidad.distribucionBinomial(dato[0],dato[1],dato[2],dato[4]),10000),redondeo(dato[3],10000));
+// datosdistribucionBinomial.forEach((dato,index)=>{
+//     Deno.test("distribucionBinomial "+index+" "+dato[1], () => {
+//         assertEquals(redondeo(probabilidad.distribucionBinomial(dato[0],dato[1],dato[2],dato[4]),10000),redondeo(dato[3],10000));
+//     });
+// })
+
+let moda:[number[],number][]=[
+    [[7,9,9,10,10,10,11,12,12,14],10]
+]
+moda.forEach((dato,index)=>{
+    Deno.test("moda "+index+" "+dato[1], () => {
+        assertEquals(probabilidad.moda(dato[0]),dato[1]);
     });
 })
 
+
+let distribuciones:[number[],number,probabilidad.NumeroCuartil?][]=[
+    [[7,9,9,10,10,10,11,12,12,14], probabilidad.NumeroCuartil.uno,9],
+    [[7,9,9,10,10,10,11,12,12,14], probabilidad.NumeroCuartil.tres,12],
+    [[7,12,15,10,6,4,14,11,4], probabilidad.NumeroCuartil.uno,5],
+    [[7,12,15,10,6,4,14,11,4], probabilidad.NumeroCuartil.tres,13],
+    [[7,12,15,10,6,4,14,11,4], probabilidad.NumeroCuartil.dos,10],
+    [[7,9,9,10,10,10,11,12,12,14], probabilidad.NumeroCuartil.dos,10],
+    [[7,9,9,10,10,10,11,12,12,14], probabilidad.NumeroCuartil.tres,12],
+    [[7,9,9,10,10,10,11,12,12,14], probabilidad.NumeroCuartil.uno,9],
+    [[0,0,0,1,2,2,4,5,7,8,10], probabilidad.NumeroCuartil.uno,0],
+    [[0,0,0,1,2,2,4,5,7,8,10], probabilidad.NumeroCuartil.dos,2],
+    [[0,0,0,1,2,2,4,5,7,8,10], probabilidad.NumeroCuartil.tres,7],
+    [[43,44,44,44,45,47,48], probabilidad.NumeroCuartil.uno,44],
+    [[43,44,44,44,45,47,48], probabilidad.NumeroCuartil.dos,44],
+    [[43,44,44,44,45,47,48], probabilidad.NumeroCuartil.tres,47],
+    [[43,44,44,44,45,45,47,48,48], probabilidad.NumeroCuartil.uno,44],
+    [[43,44,44,44,45,45,47,48,48], probabilidad.NumeroCuartil.dos,45],
+    [[43,44,44,44,45,45,47,48,48], probabilidad.NumeroCuartil.tres,47.5],
+    [[32,34,35,35,39,40,44,47], probabilidad.NumeroCuartil.uno,34.5],
+    [[32,34,35,35,39,40,44,47], probabilidad.NumeroCuartil.dos,37],
+    [[32,34,35,35,39,40,44,47], probabilidad.NumeroCuartil.tres,42],
+    [[0,0,0,1,1,3,3,4,7,7], probabilidad.NumeroCuartil.uno,0],
+    [[0,0,0,1,1,3,3,4,7,7], probabilidad.NumeroCuartil.dos,2],
+    [[0,0,0,1,1,3,3,4,7,7], probabilidad.NumeroCuartil.tres,4],
+    [[4,4,6,7,10,11,12,14,15], probabilidad.NumeroCuartil.uno,5],
+    [[4,4,6,7,10,11,12,14,15], probabilidad.NumeroCuartil.dos,10],
+    [[4,4,6,7,10,11,12,14,15], probabilidad.NumeroCuartil.tres,13],
+    [[0,0,0,1,2,2,2,2,2,3,4], probabilidad.NumeroCuartil.uno,0],
+    [[0,0,0,1,2,2,2,2,2,3,4], probabilidad.NumeroCuartil.dos,2],
+    [[0,0,0,1,2,2,2,2,2,3,4], probabilidad.NumeroCuartil.tres,2],
+    [[0,0,1/4,1/2,1/2,1,1,1,5/4,2,2], probabilidad.NumeroCuartil.uno,1/4],
+    [[0,0,1/4,1/2,1/2,1,1,1,5/4,2,2], probabilidad.NumeroCuartil.dos,1],
+    [[0,0,1/4,1/2,1/2,1,1,1,5/4,2,2], probabilidad.NumeroCuartil.tres,5/4],
+
+
+
+
+    
+]
+
+distribuciones.forEach((dato,index)=>{
+    Deno.test("distribucionBinomial "+index+" "+dato[1], () => {
+        assertEquals(probabilidad.cuartil(dato[0],dato[1]),dato[2]);
+    });
+})
 // esto genra error Math.pow(0.15000000000000002, 13) = 1.946195068359379e-11

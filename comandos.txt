@@ -1,3 +1,4 @@
 nodemon --exec " python -v " ./app.py
 deno test index.test.ts
 npx nodemon --exec " deno test  " index.test.ts
+npx nodemon --exec " deno run  " recuperacion.ts
